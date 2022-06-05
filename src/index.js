@@ -21,6 +21,7 @@ function fetchPicture(e) {
     }).then(viewGallery => {
         console.log(viewGallery);
         if (viewGallery.total >= 1) {
+            Notify.success(`Hooray! We found ${viewGallery.total} images.`);
             const markup = pictureCard(viewGallery);
             console.log(markup);
             gallery.innerHTML = markup;
