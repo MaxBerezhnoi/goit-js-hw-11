@@ -23,7 +23,8 @@ function loadMoreFu(e) {
 function cleanFu(e) {
    if (input.value.trim() === "") {
             page = 1;
-            gallery.innerHTML = "";
+       gallery.innerHTML = "";
+       loadMore.setAttribute("hidden", true);
             return page;
         } 
 }
@@ -41,10 +42,13 @@ function fetchPicture(e) {
         console.log(viewGallery);
         //-input if
          if (viewGallery.total >= 1) {
-            Notify.success(`Hooray! We found ${viewGallery.total} images.`);
+             Notify.success(`Hooray! We found ${viewGallery.total} images.`);
+             const q = page * 40;
+             Notify.info(`You see ${q} fotos`);
             const markup = pictureCard(viewGallery);
             console.log(markup);
-            gallery.innerHTML = markup;
+             gallery.innerHTML = markup;
+             loadMore.removeAttribute("hidden");
             
         }
         else {
