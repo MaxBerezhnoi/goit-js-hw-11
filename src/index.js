@@ -1,6 +1,10 @@
 import './sass/main.scss';
+import './css/gallery.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import pictureCard from './templates/pictureCard.hbs';
+import  SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
+
 /*let a = "red woman"
 fetch(`https://pixabay.com/api/?key=27845573-c4cb755b67afa71dbf7307045&q=${a}`).then(response => {
     return response.json();
@@ -28,13 +32,12 @@ function cleanFu(e) {
             return page;
         } 
 }
-
+/* --- рабочая фукция без синтаксиса async ---
 function fetchPicture(e) {
     e.preventDefault();
     
-
-    
     console.log(input.value.trim());
+
     return fetch(`https://pixabay.com/api/?key=27845573-c4cb755b67afa71dbf7307045&q=${input.value.trim()}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${page}`)
     .then(response => {
                 return response.json();
@@ -68,7 +71,55 @@ function fetchPicture(e) {
     })
             
 }
+ */       
+async function fetchPicture(e) {
+    e.preventDefault();
+    
+    console.log(input.value.trim());
+    try {
+        const response = await fetch(`https://pixabay.com/api/?key=27845573-c4cb755b67afa71dbf7307045&q=${input.value.trim()}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${page}`)
+        const viewGallery = await response.json();
+        console.log(viewGallery);
+        //-input if
         
+        if (viewGallery.total >= 1) {
+            Notify.success(`Hooray! We found ${viewGallery.total} images.`);
+            const q = viewGallery.hits.length;
+            const qQ = q * page;
+             
+            const markup = pictureCard(viewGallery);
+            console.log(markup);
+            gallery.innerHTML = markup;
+            loadMore.removeAttribute("hidden");
 
+ 
+            
+            if (q < 40) {
+                loadMore.setAttribute("hidden", true);
+                Notify.info(`We're sorry, but you've reached the end of search results. It was the last ${q} pictures`);
+                  
+            }
+            else if (q === 40) {
+                Notify.info(`You see ${qQ} pictures`);
+        }
+        const lightbox = new SimpleLightbox('.gallery a');
+            markup.on(show.SimpleLightbox, function () {
+                markup.defaultOptions.captionDelay = 250;
+            })    
+        }
+        else {
+            Notify.info("Sorry, there are no images matching your search query. Please try again.");
+        }
+    
+    }
+    catch (error) {
+    console.log(error);   
+    }
+}
+
+/*let ligthBox = new SimpleLightbox('.gallery a');
+gallery.on(show.SimpleLightbox, function () {
+    gallery.defaultOptions.captionDelay = 250;
+});*/
 
 
