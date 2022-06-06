@@ -22,6 +22,7 @@ const input = document.querySelector("input");
 function loadMoreFu(e) {
     page += 1;
     fetchPicture(e);
+    lightbox.refresh();
 }
 
 function cleanFu(e) {
