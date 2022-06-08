@@ -5,10 +5,13 @@ import pictureCard from './templates/pictureCard.hbs';
 import  SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 
+const axios = require('axios');
+
 /*let a = "red woman"
 fetch(`https://pixabay.com/api/?key=27845573-c4cb755b67afa71dbf7307045&q=${a}`).then(response => {
     return response.json();
 }).then(console.log);*/
+let submitValue;
 const loadMore = document.querySelector(".load-more");
 loadMore.addEventListener("click", loadMoreFu);
 let page = 1;
@@ -18,7 +21,8 @@ const form = document.querySelector('.search-form');
 form.addEventListener("submit", fetchPicture);
 
 const input = document.querySelector("input");
-    input.addEventListener("input", cleanFu);
+input.addEventListener("input", cleanFu);
+    
 function loadMoreFu(e) {
     page += 1;
     fetchPicture(e);
@@ -26,12 +30,12 @@ function loadMoreFu(e) {
 }
 
 function cleanFu(e) {
-   if (input.value.trim() === "") {
-            page = 1;
-       gallery.innerHTML = "";
-       loadMore.setAttribute("hidden", true);
-            return page;
-        } 
+    if (input.value.trim() === "" || input.value.trim() !== submitValue ){
+        page = 1;
+        gallery.innerHTML = "";
+        loadMore.setAttribute("hidden", true);
+        return page;
+    }
 }
 /* --- рабочая фукция без синтаксиса async ---
 function fetchPicture(e) {
@@ -75,20 +79,21 @@ function fetchPicture(e) {
  */       
 async function fetchPicture(e) {
     e.preventDefault();
-    
+    loadMore.setAttribute("hidden", true);
     console.log(input.value.trim());
     try {
-        const response = await fetch(`https://pixabay.com/api/?key=27845573-c4cb755b67afa71dbf7307045&q=${input.value.trim()}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${page}`)
-        const viewGallery = await response.json();
-        console.log(viewGallery);
-        //-input if
         
-        if (viewGallery.total >= 1) {
-            Notify.success(`Hooray! We found ${viewGallery.total} images.`);
-            const q = viewGallery.hits.length;
+        const viewGallery = await axios.get(`https://pixabay.com/api/?key=27845573-c4cb755b67afa71dbf7307045&q=${input.value.trim()}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${page}`)
+        //const viewGallery = await response.json();
+        console.log(viewGallery);
+        
+        
+        if (viewGallery.data.total >= 1) {
+            Notify.success(`Hooray! We found ${viewGallery.data.total} images.`);
+            const q = viewGallery.data.hits.length;
             const qQ = q * page;
              
-            const markup = pictureCard(viewGallery);
+            const markup = pictureCard(viewGallery.data);
             console.log(markup);
             gallery.innerHTML = markup;
             loadMore.removeAttribute("hidden");
@@ -106,12 +111,15 @@ async function fetchPicture(e) {
         const lightbox = new SimpleLightbox('.gallery a');
             markup.on(show.SimpleLightbox, function () {
                 markup.defaultOptions.captionDelay = 250;
-            })    
+            })  
+            submitValue = e.currentTarget.value;
+            return submitValue;
         }
         else {
             Notify.info("Sorry, there are no images matching your search query. Please try again.");
         }
-    
+
+        
     }
     catch (error) {
     console.log(error);   

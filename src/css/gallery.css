@@ -48,21 +48,38 @@
   justify-content: center;
   margin-bottom: 20px;
   padding: 10px;
-  border-bottom: solid 3px;
+  border-bottom: solid 2px;
   background-color: blueviolet;
   align-items: center;
 }
 input{
-  border-radius: 20% 0 20% 0;
+  border-radius: 10px 0 10px 0;
   height: 30px;
   margin-right: 15px;
 }
+.text:focus{
+  outline: 1px solid rgb(193, 154, 233);
+  background-color: rgb(245, 111, 111);
+  color: antiquewhite;
+}
+.text:hover{
+  background-color: rgb(245, 111, 111);
+}
 button{
   border-radius: 20%;
+  border-color: rgb(193, 154, 233);
   width:fit-content;
   height: 30px;
   background-color: rgb(231, 80, 80);
   color: antiquewhite;
+  box-shadow: 1px 2px rgb(193, 154, 233);
+}
+button:hover{
+  background-color: rgb(245, 111, 111);
+}
+button:active{
+  box-shadow: 0 1px #666;
+    transform: translateY(3px);
 }
 body{
   display: flex;
